@@ -92,7 +92,7 @@ def main() -> None:
         validate_dataset(TARGET_CSV_PATH)
         print("\n✔ Ingestão e validação finalizadas com sucesso!")
     except Exception as exc:
-        print(f"\n Erro durante a ingestão: {exc}", file=sys.stderr)
+        print(f"\ Erro durante a ingestão: {exc}", file=sys.stderr)
         sys.exit(1)
 
 

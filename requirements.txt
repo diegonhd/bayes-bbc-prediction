@@ -8,3 +8,10 @@ seaborn>=0.12.0
 ipykernel
 nltk
 wordcloud
+fastapi
+uvicorn
+requests
+beautifulsoup4
+trafilatura
+pytest
+httpx

@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Classificador BBC</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <div class="app-wrapper">
+
+    <!-- 1. CABEÇALHO (Conforme Cabeçalho.png) -->
+    <header class="editorial-header">
+      <div class="header-tag">
+        <span class="tag-dash"></span>
+        <span class="tag-text">PROBABILIDADE E ESTATÍSTICA</span>
+      </div>
+      <h1 class="header-title">Classificador Naive-Bayes de Notícias da BBC</h1>
+      <p class="header-subtitle">
+        Cole o link de uma notícia da BBC. Confira a prévia e descubra a classificação do modelo.
+      </p>
+    </header>
+
+    <!-- 2. ÁREA DE ENTRADA DA URL -->
+    <section class="search-section">
+      <div class="search-box-card">
+        <div class="search-header">
+          <label for="url-input" class="search-label">URL da notícia</label>
+          <span class="domain-hint">bbc.com ou bbc.co.uk</span>
+        </div>
+        
+        <form id="scrape-form" class="search-form">
+          <input 
+            type="url" 
+            id="url-input" 
+            class="search-input" 
+            placeholder="https://www.bbc.com/news/articles/..." 
+            required
+            autocomplete="off"
+          />
+          <button type="submit" id="btn-submit" class="submit-btn">
+            <span class="btn-text">Analisar notícia</span>
+            <span class="btn-arrow">&rarr;</span>
+          </button>
+        </form>
+
+        <div class="search-footer">
+          <span class="search-hint">Insira o link completo. A prévia e o resultado aparecerão abaixo após a análise.</span>
+          <div class="quick-examples">
+            <span class="examples-label">Exemplos rápidos:</span>
+            <button type="button" class="example-chip" data-url="https://www.bbc.com/news/articles/cqe9k09j9jv4o" data-demo="tech">Tecnologia</button>
+            <button type="button" class="example-chip" data-url="https://www.bbc.com/news/articles/cqwy06zrd26lo" data-demo="business">Negócios</button>
+            <button type="button" class="example-chip" data-url="https://www.bbc.com/news/articles/c6vg2v9xkr40o" data-demo="politics">Política</button>
+            <button type="button" class="example-chip" data-url="https://www.bbc.com/sport/football/articles/ck9d7qxxl7w8o" data-demo="sport">Esportes</button>
+            <button type="button" class="example-chip" data-url="https://www.bbc.com/news/articles/ck3rgp4gv9pxo" data-demo="entertainment">Entretenimento</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. ÁREA DE ANÁLISE EM DUAS COLUNAS (Conforme Área de análise.png) -->
+    <section class="analysis-section">
+      <div class="analysis-grid">
+
+        <!-- COLUNA 01: PRÉVIA DA NOTÍCIA -->
+        <article class="analysis-card preview-card">
+          <div class="card-header">
+            <h2 class="card-title">01 PRÉVIA DA NOTÍCIA</h2>
+            <span id="preview-badge" class="status-badge badge-neutral">EXEMPLO</span>
+          </div>
+
+          <div class="preview-content">
+            <div class="preview-brand">
+              <span class="bbc-logo-text">BBC NEWS</span>
+            </div>
+
+            <div id="preview-category-tag" class="preview-category-tag">Tecnologia</div>
+
+            <h3 id="preview-title" class="preview-headline">
+              San Francisco is enjoying an AI boom, but worries about a crash are growing
+            </h3>
+
+            <p id="preview-summary" class="preview-lead">
+              AI employees in the industry's epicentre - San Francisco - worry that the sector is overheated.
+            </p>
+
+            <div id="preview-image-container" class="preview-image-container">
+              <img id="preview-image" src="https://ichef.bbci.co.uk/news/1024/branded_news/06d6/live/b3d40440-e712-11f1-a094-5fdc692f3e33.jpg" alt="Capa da notícia" />
+            </div>
+
+            <div class="preview-meta-footer">
+              <span id="preview-domain" class="preview-domain">bbc.com/news</span>
+              <a id="preview-link" href="https://www.bbc.com/news/articles/cqe9k09j9jv4o" target="_blank" rel="noopener noreferrer" class="preview-source-link">
+                Fonte da notícia <span class="external-icon">&#x2197;</span>
+              </a>
+            </div>
+
+            <p class="card-disclaimer">
+              Título e resumo informativos. A prévia real virá da URL.
+            </p>
+          </div>
+        </article>
+
+        <!-- COLUNA 02: RESULTADO DO MODELO -->
+        <article class="analysis-card result-card">
+          <div class="card-header">
+            <h2 class="card-title">02 RESULTADO DO MODELO</h2>
+            <span id="result-badge" class="status-badge badge-demo">DEMONSTRAÇÃO</span>
+          </div>
+
+          <div class="result-content">
+            <div class="identified-label">Tema identificado</div>
+            <h3 id="result-category" class="identified-category">Tecnologia</h3>
+
+            <div class="confidence-container">
+              <span id="result-confidence" class="confidence-number">100,0%</span>
+              <span class="confidence-text">de confiança</span>
+            </div>
+
+            <!-- Barras de Probabilidade para as Classes Reais -->
+            <div id="probabilities-container" class="probabilities-container">
+              <!-- Item 1: Top 1 -->
+              <div class="prob-row">
+                <div class="prob-labels">
+                  <span class="prob-name">Tecnologia</span>
+                  <span class="prob-pct">100,0%</span>
+                </div>
+                <div class="prob-bar-track">
+                  <div class="prob-bar-fill top-fill" style="width: 100%;"></div>
+                </div>
+              </div>
+
+              <!-- Item 2: Top 2 -->
+              <div class="prob-row">
+                <div class="prob-labels">
+                  <span class="prob-name">Negócios</span>
+                  <span class="prob-pct">0,0%</span>
+                </div>
+                <div class="prob-bar-track">
+                  <div class="prob-bar-fill secondary-fill" style="width: 0%;"></div>
+                </div>
+              </div>
+
+              <!-- Item 3: Top 3 -->
+              <div class="prob-row">
+                <div class="prob-labels">
+                  <span class="prob-name">Política</span>
+                  <span class="prob-pct">0,0%</span>
+                </div>
+                <div class="prob-bar-track">
+                  <div class="prob-bar-fill secondary-fill" style="width: 0%;"></div>
+                </div>
+              </div>
+
+              <!-- Item 4: Top 4 -->
+              <div class="prob-row">
+                <div class="prob-labels">
+                  <span class="prob-name">Entretenimento</span>
+                  <span class="prob-pct">0,0%</span>
+                </div>
+                <div class="prob-bar-track">
+                  <div class="prob-bar-fill secondary-fill" style="width: 0%;"></div>
+                </div>
+              </div>
+
+              <!-- Item 5: Top 5 -->
+              <div class="prob-row">
+                <div class="prob-labels">
+                  <span class="prob-name">Esportes</span>
+                  <span class="prob-pct">0,0%</span>
+                </div>
+                <div class="prob-bar-track">
+                  <div class="prob-bar-fill secondary-fill" style="width: 0%;"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card de Saída do Modelo em JSON (Conforme Área de análise.png) -->
+            <div class="json-output-card">
+              <div class="json-header">
+                <span class="json-title">SAÍDA DO MODELO</span>
+                <span class="json-badge">JSON</span>
+              </div>
+              <pre id="json-code-block" class="json-code"><code>{
+  "categoria": "tech",
+  "confianca": 1.0
+}</code></pre>
+            </div>
+
+            <p class="card-disclaimer">
+              Classificação probabilística gerada pelo Modelo Naive-Bayes (Multinomial) e a confiança de inferência.
+            </p>
+          </div>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- 4. RODAPÉ DIDÁTICO EM 3 PASSOS (Conforme Rodapé.png) -->
+    <footer class="steps-footer">
+      <div class="steps-grid">
+        <div class="step-col">
+          <div class="step-num">01</div>
+          <h4 class="step-title">Cole o link</h4>
+          <p class="step-desc">Use a URL completa de uma notícia da BBC.</p>
+        </div>
+        <div class="step-col">
+          <div class="step-num">02</div>
+          <h4 class="step-title">Confira a prévia</h4>
+          <p class="step-desc">Veja o título e o resumo da notícia.</p>
+        </div>
+        <div class="step-col">
+          <div class="step-num">03</div>
+          <h4 class="step-title">Explore o resultado</h4>
+          <p class="step-desc">Consulte o tema e a confiança do modelo.</p>
+        </div>
+      </div>
+    </footer>
+
+  </div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
